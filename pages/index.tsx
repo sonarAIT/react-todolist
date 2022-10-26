@@ -1,12 +1,13 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
+import { RecoilRoot } from "recoil";
+
 import TodoInput from "./TodoInput";
 import TodoList from "./TodoList";
 
 const Home: NextPage = () => {
     return (
-        <div>
+        <RecoilRoot>
             <Head>
                 <title>Create Next App</title>
                 <meta
@@ -17,7 +18,7 @@ const Home: NextPage = () => {
             </Head>
             <TodoInput />
             <TodoList />
-        </div>
+        </RecoilRoot>
     );
 };
 

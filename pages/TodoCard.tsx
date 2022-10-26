@@ -1,4 +1,5 @@
 import type { NextComponentType, NextPageContext } from "next";
+import { useSetRecoilState } from "recoil";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -7,12 +8,7 @@ import CardActions from "@mui/material/CardActions";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-export type Todo = {
-    id: number;
-    taskName: string;
-    taskDetail: string;
-    date: string;
-};
+import { Todo, todoAtom } from "./atom/todoAtom";
 
 type TodoCardProps = {
     todo: Todo;
@@ -21,12 +17,16 @@ type TodoCardProps = {
 const TodoCard: NextComponentType<NextPageContext, {}, TodoCardProps> = (
     props: TodoCardProps
 ) => {
+    const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
+
     const doDelete = () => {
-        console.log("delete");
+        setTodoList((oldTodoList) => {
+            return oldTodoList.filter((todo) => todo.id !== props.todo.id);
+        });
     };
 
     return (
-        <Grid item xs={6}>
+        <Grid item xs={5.9}>
             <Card>
                 <CardContent>
                     <Grid container rowSpacing={2}>

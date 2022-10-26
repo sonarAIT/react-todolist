@@ -1,4 +1,5 @@
 import type { NextComponentType } from "next";
+import { useSetRecoilState } from "recoil";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -6,22 +7,32 @@ import Typography from "@mui/material/Typography";
 import InputLabel from "@mui/material/InputLabel";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+
+import { Todo, todoAtom } from "./atom/todoAtom";
 
 type TodoForm = {
     taskName: string;
     taskDetail: string;
-}
+};
 
 const TodoInput: NextComponentType = () => {
+    const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
+
     const isValid: SubmitHandler<TodoForm> = (data: TodoForm) => {
-        console.log(data);
+        const newTodo: Todo = {
+            id: new Date().getTime(),
+            taskName: data.taskName,
+            taskDetail: data.taskDetail,
+            date: new Date().toLocaleString(),
+        };
+        setTodoList((oldTodoList) => [...oldTodoList, newTodo]);
     };
+
     const isInValid: SubmitErrorHandler<TodoForm> = (errors: any) => {
         console.log(errors);
-        console.log("Fail Login");
     };
+
     const {
         register,
         handleSubmit,
@@ -33,9 +44,7 @@ const TodoInput: NextComponentType = () => {
             <Grid item xs={11}>
                 <Card>
                     <CardContent>
-                        <form
-                            onSubmit={handleSubmit(isValid, isInValid)}
-                        >
+                        <form onSubmit={handleSubmit(isValid, isInValid)}>
                             <Grid container rowSpacing={2}>
                                 <Grid item xs={12}>
                                     <Typography
@@ -60,7 +69,11 @@ const TodoInput: NextComponentType = () => {
                                             },
                                         })}
                                         error={errors.taskName ? true : false}
-                                        helperText={errors.taskName? errors.taskName.message : ""}
+                                        helperText={
+                                            errors.taskName
+                                                ? errors.taskName.message
+                                                : ""
+                                        }
                                         id="task-name"
                                         variant="outlined"
                                         fullWidth
@@ -72,8 +85,7 @@ const TodoInput: NextComponentType = () => {
                                         Task Detail
                                     </InputLabel>
                                     <TextField
-                                        {...register("taskDetail", {
-                                        })}
+                                        {...register("taskDetail", {})}
                                         id="task-detail"
                                         multiline
                                         rows={4}
