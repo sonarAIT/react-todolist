@@ -1,3 +1,4 @@
+import React from "react";
 import type { NextComponentType, NextPageContext } from "next";
 import { useSetRecoilState } from "recoil";
 import Grid from "@mui/material/Grid";
@@ -14,9 +15,10 @@ type TodoCardProps = {
     todo: Todo;
 };
 
-const TodoCard: NextComponentType<NextPageContext, {}, TodoCardProps> = (
+const _TodoCard: NextComponentType<NextPageContext, {}, TodoCardProps> = (
     props: TodoCardProps
 ) => {
+    console.log("TodoCard");
     const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
 
     const doDelete = () => {
@@ -64,4 +66,5 @@ const TodoCard: NextComponentType<NextPageContext, {}, TodoCardProps> = (
     );
 };
 
+const TodoCard = React.memo(_TodoCard);
 export default TodoCard;

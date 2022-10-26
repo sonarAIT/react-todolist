@@ -1,3 +1,4 @@
+import React from "react";
 import type { NextComponentType } from "next";
 import { useRecoilValue } from "recoil";
 import Grid from "@mui/material/Grid";
@@ -6,7 +7,8 @@ import TodoCard from "./TodoCard";
 import { Todo } from "./atom/todoAtom";
 import { todoAtom } from "./atom/todoAtom";
 
-const TodoList: NextComponentType = () => {
+const _TodoList: NextComponentType = () => {
+    console.log("TodoList");
     const todoList = useRecoilValue<Todo[]>(todoAtom);
 
     return (
@@ -22,4 +24,5 @@ const TodoList: NextComponentType = () => {
     );
 };
 
+const TodoList = React.memo(_TodoList);
 export default TodoList;

@@ -6,6 +6,7 @@ import TodoInput from "./TodoInput";
 import TodoList from "./TodoList";
 
 const Home: NextPage = () => {
+    console.log("Home");
     return (
         <RecoilRoot>
             <Head>

@@ -1,3 +1,4 @@
+import React from "react";
 import type { NextComponentType } from "next";
 import { useSetRecoilState } from "recoil";
 import Grid from "@mui/material/Grid";
@@ -16,7 +17,8 @@ type TodoForm = {
     taskDetail: string;
 };
 
-const TodoInput: NextComponentType = () => {
+const _TodoInput: NextComponentType = () => {
+    console.log("TodoInput");
     const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
 
     const isValid: SubmitHandler<TodoForm> = (data: TodoForm) => {
@@ -107,4 +109,5 @@ const TodoInput: NextComponentType = () => {
     );
 };
 
+const TodoInput = React.memo(_TodoInput);
 export default TodoInput;
