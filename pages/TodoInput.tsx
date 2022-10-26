@@ -9,7 +9,7 @@ import Button from "@mui/material/Button";
 
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
-interface TodoForm {
+type TodoForm = {
     taskName: string;
     taskDetail: string;
 }
