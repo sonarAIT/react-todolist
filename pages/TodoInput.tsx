@@ -9,8 +9,10 @@ import InputLabel from "@mui/material/InputLabel";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+import axios from "axios";
 
 import { Todo, todoAtom } from "./atom/todoAtom";
+import { MOCK_TODOS_URL } from "./index";
 
 type TodoForm = {
     taskName: string;
@@ -28,7 +30,8 @@ const _TodoInput: NextComponentType = () => {
             taskDetail: data.taskDetail,
             date: new Date().toLocaleString(),
         };
-        setTodoList((oldTodoList) => [...oldTodoList, newTodo]);
+        axios.post(MOCK_TODOS_URL, newTodo);
+        // setTodoList((oldTodoList) => [...oldTodoList, newTodo]);
     };
 
     const isInValid: SubmitErrorHandler<TodoForm> = (errors: any) => {

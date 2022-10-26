@@ -8,8 +8,10 @@ import Typography from "@mui/material/Typography";
 import CardActions from "@mui/material/CardActions";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
 
 import { Todo, todoAtom } from "./atom/todoAtom";
+import { MOCK_TODOS_URL } from "./index";
 
 type TodoCardProps = {
     todo: Todo;
@@ -19,12 +21,13 @@ const _TodoCard: NextComponentType<NextPageContext, {}, TodoCardProps> = (
     props: TodoCardProps
 ) => {
     console.log("TodoCard");
-    const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
+    // const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
 
-    const doDelete = () => {
-        setTodoList((oldTodoList) => {
-            return oldTodoList.filter((todo) => todo.id !== props.todo.id);
-        });
+    const doDelete = async () => {
+        axios.delete(MOCK_TODOS_URL + props.todo.id);
+        // setTodoList((oldTodoList) => {
+        //     return oldTodoList.filter((todo) => todo.id !== props.todo.id);
+        // });
     };
 
     return (

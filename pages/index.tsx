@@ -5,6 +5,8 @@ import { RecoilRoot } from "recoil";
 import TodoInput from "./TodoInput";
 import TodoList from "./TodoList";
 
+export const MOCK_TODOS_URL = "http://localhost:3001/todos/";
+
 const Home: NextPage = () => {
     console.log("Home");
     return (
