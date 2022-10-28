@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import axios from "axios";
+import useSWR from "swr";
 import { useSetRecoilState } from "recoil";
 
 import type { Todo } from "@prisma/client";
@@ -13,14 +14,19 @@ import TodoList from "./TodoList";
 const _Home: NextPage = () => {
     console.log("Home");
     const setTodoList = useSetRecoilState<Array<Todo>>(todoAtom);
+    const { data: data, error } = useSWR<Array<Todo>>(
+        "/api/todo",
+        (url: string): Promise<Array<Todo>> =>
+            axios(url, {
+                headers: { "Content-Type": "application/json" },
+            }).then((res) => res.data)
+    );
 
     useEffect(() => {
-        axios.get<Array<Todo>>("/api/todo",{
-            headers: { "Content-Type": "application/json" },
-        }).then((res) => {
-            setTodoList(res.data);
-        });
-    }, []);
+        if (data && !error) {
+            setTodoList(data);
+        }
+    }, [data, error]);
 
     return (
         <div>
