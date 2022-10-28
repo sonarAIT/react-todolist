@@ -10,8 +10,8 @@ import CardActions from "@mui/material/CardActions";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { MOCK_TODOS_URL } from "./index";
-import { Todo, todoAtom } from "./atom/todoAtom";
+import type { Todo } from "@prisma/client";
+import { todoAtom } from "./atom/todoAtom";
 
 type TodoCardProps = {
     todo: Todo;
@@ -24,11 +24,17 @@ const _TodoCard: NextComponentType<NextPageContext, {}, TodoCardProps> = (
     const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
 
     const doDelete = useCallback(async () => {
-        axios.delete(MOCK_TODOS_URL + props.todo.id).then((res) => {
-            setTodoList((oldTodoList) => {
-                return oldTodoList.filter((todo) => todo.id !== props.todo.id);
+        axios
+            .delete("/api/todo?id=" + props.todo.id, {
+                headers: { "Content-Type": "application/json" },
+            })
+            .then(() => {
+                setTodoList((oldTodoList) => {
+                    return oldTodoList.filter(
+                        (todo) => todo.id !== props.todo.id
+                    );
+                });
             });
-        });
     }, [setTodoList]);
 
     return (
@@ -42,7 +48,7 @@ const _TodoCard: NextComponentType<NextPageContext, {}, TodoCardProps> = (
                                 component="div"
                                 gutterBottom
                             >
-                                {props.todo.taskName}
+                                {props.todo.title}
                             </Typography>
 
                             <Typography color="text.secondary" sx={{ mb: 1 }}>
@@ -52,7 +58,7 @@ const _TodoCard: NextComponentType<NextPageContext, {}, TodoCardProps> = (
 
                         <Grid item xs={12}>
                             <Typography variant="body2">
-                                {props.todo.taskDetail}
+                                {props.todo.detail}
                             </Typography>
                         </Grid>
                     </Grid>

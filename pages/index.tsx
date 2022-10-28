@@ -2,30 +2,25 @@ import React, { useEffect } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import axios from "axios";
-import useSWR from "swr";
 import { useSetRecoilState } from "recoil";
 
-import { Todo, todoAtom } from "./atom/todoAtom";
+import type { Todo } from "@prisma/client";
+
+import { todoAtom } from "./atom/todoAtom";
 import TodoInput from "./TodoInput";
 import TodoList from "./TodoList";
-import ErrorMessage from "./errorMessage";
-
-export const MOCK_TODOS_URL = "http://localhost:3001/todos/";
 
 const _Home: NextPage = () => {
     console.log("Home");
     const setTodoList = useSetRecoilState<Array<Todo>>(todoAtom);
-    const { data: data, error } = useSWR<Array<Todo>>(
-        MOCK_TODOS_URL,
-        (url: string): Promise<Array<Todo>> =>
-            axios(url).then((res) => res.data)
-    );
 
     useEffect(() => {
-        if (data && !error) {
-            setTodoList(data);
-        }
-    }, [data, error]);
+        axios.get<Array<Todo>>("/api/todo",{
+            headers: { "Content-Type": "application/json" },
+        }).then((res) => {
+            setTodoList(res.data);
+        });
+    }, []);
 
     return (
         <div>
@@ -37,9 +32,8 @@ const _Home: NextPage = () => {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            
+
             <TodoInput />
-            <ErrorMessage data={data} error={error} />
             <TodoList />
         </div>
     );

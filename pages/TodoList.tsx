@@ -3,8 +3,9 @@ import type { NextComponentType } from "next";
 import { useRecoilValue } from "recoil";
 import Grid from "@mui/material/Grid";
 
+import { Todo } from "@prisma/client";
 import TodoCard from "./TodoCard";
-import { Todo, todoAtom } from "./atom/todoAtom";
+import { todoAtom } from "./atom/todoAtom";
 
 const _TodoList: NextComponentType = () => {
     console.log("TodoList");

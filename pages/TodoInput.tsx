@@ -11,42 +11,46 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 
-import { Todo, todoAtom } from "./atom/todoAtom";
-import { MOCK_TODOS_URL } from "./index";
+import type { Todo } from "@prisma/client";
+import type { NewTodo } from "./api/todo";
+import { todoAtom } from "./atom/todoAtom";
 
 type TodoForm = {
     taskName: string;
     taskDetail: string;
 };
 
-type NewTodo = {
-    taskName: string;
-    taskDetail: string;
-    date: string;
-};
-
 const _TodoInput: NextComponentType = () => {
     console.log("TodoInput");
     const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
 
-    const isValid: SubmitHandler<TodoForm> = useCallback(async (data: TodoForm) => {
-        const newTodo: NewTodo = {
-            taskName: data.taskName,
-            taskDetail: data.taskDetail,
-            date: new Date().toLocaleString(),
-        };
-        axios
-            .post(MOCK_TODOS_URL, newTodo)
-            .then((res: AxiosResponse<Todo>) => {
-                setTodoList((oldTodoList) => {
-                    return oldTodoList.concat(res.data);
+    const isValid: SubmitHandler<TodoForm> = useCallback(
+        async (data: TodoForm) => {
+            const newTodo: NewTodo = {
+                title: data.taskName,
+                detail: data.taskDetail,
+                date: new Date().toLocaleString(),
+            };
+            axios
+                .post<Todo>("/api/todo", {
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newTodo),
+                })
+                .then((res) => {
+                    setTodoList((oldTodoList) => {
+                        return oldTodoList.concat(res.data);
+                    });
                 });
-            });
-    }, [setTodoList]);
+        },
+        [setTodoList]
+    );
 
-    const isInValid: SubmitErrorHandler<TodoForm> = useCallback((errors: any) => {
-        console.log(errors);
-    }, []);
+    const isInValid: SubmitErrorHandler<TodoForm> = useCallback(
+        (errors: any) => {
+            console.log(errors);
+        },
+        []
+    );
 
     const {
         register,
