@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useCallback } from "react";
 import type { NextComponentType, NextPageContext } from "next";
+import axios from "axios";
 import { useSetRecoilState } from "recoil";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -8,10 +9,9 @@ import Typography from "@mui/material/Typography";
 import CardActions from "@mui/material/CardActions";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
 
-import { Todo, todoAtom } from "./atom/todoAtom";
 import { MOCK_TODOS_URL } from "./index";
+import { Todo, todoAtom } from "./atom/todoAtom";
 
 type TodoCardProps = {
     todo: Todo;
@@ -23,13 +23,13 @@ const _TodoCard: NextComponentType<NextPageContext, {}, TodoCardProps> = (
     console.log("TodoCard");
     const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
 
-    const doDelete = async () => {
+    const doDelete = useCallback(async () => {
         axios.delete(MOCK_TODOS_URL + props.todo.id).then((res) => {
             setTodoList((oldTodoList) => {
                 return oldTodoList.filter((todo) => todo.id !== props.todo.id);
             });
         });
-    };
+    }, [setTodoList]);
 
     return (
         <Grid item xs={5.9}>

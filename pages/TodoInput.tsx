@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useCallback } from "react";
 import type { NextComponentType } from "next";
+import axios, { AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
@@ -9,8 +10,6 @@ import InputLabel from "@mui/material/InputLabel";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
-import axios from "axios";
-import { AxiosResponse } from "axios";
 
 import { Todo, todoAtom } from "./atom/todoAtom";
 import { MOCK_TODOS_URL } from "./index";
@@ -30,7 +29,7 @@ const _TodoInput: NextComponentType = () => {
     console.log("TodoInput");
     const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
 
-    const isValid: SubmitHandler<TodoForm> = (data: TodoForm) => {
+    const isValid: SubmitHandler<TodoForm> = useCallback(async (data: TodoForm) => {
         const newTodo: NewTodo = {
             taskName: data.taskName,
             taskDetail: data.taskDetail,
@@ -38,17 +37,16 @@ const _TodoInput: NextComponentType = () => {
         };
         axios
             .post(MOCK_TODOS_URL, newTodo)
-            .then((res: AxiosResponse<Array<Todo>>) => {
+            .then((res: AxiosResponse<Todo>) => {
                 setTodoList((oldTodoList) => {
-                    console.log([...oldTodoList, res.data]);
-                    return [...oldTodoList, res.data];
+                    return oldTodoList.concat(res.data);
                 });
             });
-    };
+    }, [setTodoList]);
 
-    const isInValid: SubmitErrorHandler<TodoForm> = (errors: any) => {
+    const isInValid: SubmitErrorHandler<TodoForm> = useCallback((errors: any) => {
         console.log(errors);
-    };
+    }, []);
 
     const {
         register,
@@ -92,7 +90,6 @@ const _TodoInput: NextComponentType = () => {
                                                 : ""
                                         }
                                         id="task-name"
-                                        variant="outlined"
                                         fullWidth
                                     />
                                 </Grid>

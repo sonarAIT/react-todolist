@@ -1,25 +1,31 @@
-import axios from "axios";
-import { AxiosResponse } from "axios";
+import React, { useEffect } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useEffect } from "react";
+import axios from "axios";
+import useSWR from "swr";
 import { useSetRecoilState } from "recoil";
-import { Todo, todoAtom } from "./atom/todoAtom";
 
+import { Todo, todoAtom } from "./atom/todoAtom";
 import TodoInput from "./TodoInput";
 import TodoList from "./TodoList";
+import ErrorMessage from "./errorMessage";
 
 export const MOCK_TODOS_URL = "http://localhost:3001/todos/";
 
-const Home: NextPage = () => {
+const _Home: NextPage = () => {
     console.log("Home");
     const setTodoList = useSetRecoilState<Array<Todo>>(todoAtom);
+    const { data: data, error } = useSWR<Array<Todo>>(
+        MOCK_TODOS_URL,
+        (url: string): Promise<Array<Todo>> =>
+            axios(url).then((res) => res.data)
+    );
 
     useEffect(() => {
-        axios.get(MOCK_TODOS_URL).then((res: AxiosResponse<Array<Todo>>) => {
-            setTodoList(res.data);
-        });
-    }, []);
+        if (data && !error) {
+            setTodoList(data);
+        }
+    }, [data, error]);
 
     return (
         <div>
@@ -31,10 +37,13 @@ const Home: NextPage = () => {
                 />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
+            
             <TodoInput />
+            <ErrorMessage data={data} error={error} />
             <TodoList />
         </div>
     );
 };
 
+const Home = React.memo(_Home);
 export default Home;
