@@ -1,6 +1,10 @@
+import axios from "axios";
+import { AxiosResponse } from "axios";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { RecoilRoot } from "recoil";
+import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
+import { Todo, todoAtom } from "./atom/todoAtom";
 
 import TodoInput from "./TodoInput";
 import TodoList from "./TodoList";
@@ -9,8 +13,16 @@ export const MOCK_TODOS_URL = "http://localhost:3001/todos/";
 
 const Home: NextPage = () => {
     console.log("Home");
+    const setTodoList = useSetRecoilState<Array<Todo>>(todoAtom);
+
+    useEffect(() => {
+        axios.get(MOCK_TODOS_URL).then((res: AxiosResponse<Array<Todo>>) => {
+            setTodoList(res.data);
+        });
+    }, []);
+
     return (
-        <RecoilRoot>
+        <div>
             <Head>
                 <title>Create Next App</title>
                 <meta
@@ -21,7 +33,7 @@ const Home: NextPage = () => {
             </Head>
             <TodoInput />
             <TodoList />
-        </RecoilRoot>
+        </div>
     );
 };
 

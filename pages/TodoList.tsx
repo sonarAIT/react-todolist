@@ -12,13 +12,13 @@ import { MOCK_TODOS_URL } from "./index";
 
 const _TodoList: NextComponentType = () => {
     console.log("TodoList");
-    const fetcher = (url: string) =>
-        axios.get(url).then((res) => res.data);
-    const { data, error } = useSWR(MOCK_TODOS_URL, fetcher);
-    if (data === undefined) return <div>failed to load</div>;
-    console.log(data);
-    const todoList = data;
-    // const todoList = useRecoilValue<Todo[]>(todoAtom);
+    // const fetcher = (url: string) =>
+        // axios.get(url).then((res) => res.data);
+    // const { data, error } = useSWR(MOCK_TODOS_URL, fetcher);
+    // if (data === undefined) return <div>failed to load</div>;
+    // console.log(data);
+    // const todoList = data;
+    const todoList = useRecoilValue<Todo[]>(todoAtom);
 
     return (
         <Grid container justifyContent="center">

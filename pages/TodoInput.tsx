@@ -10,6 +10,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
 import axios from "axios";
+import { AxiosResponse } from "axios";
 
 import { Todo, todoAtom } from "./atom/todoAtom";
 import { MOCK_TODOS_URL } from "./index";
@@ -19,19 +20,30 @@ type TodoForm = {
     taskDetail: string;
 };
 
+type NewTodo = {
+    taskName: string;
+    taskDetail: string;
+    date: string;
+};
+
 const _TodoInput: NextComponentType = () => {
     console.log("TodoInput");
     const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
 
     const isValid: SubmitHandler<TodoForm> = (data: TodoForm) => {
-        const newTodo: Todo = {
-            id: new Date().getTime(),
+        const newTodo: NewTodo = {
             taskName: data.taskName,
             taskDetail: data.taskDetail,
             date: new Date().toLocaleString(),
         };
-        axios.post(MOCK_TODOS_URL, newTodo);
-        // setTodoList((oldTodoList) => [...oldTodoList, newTodo]);
+        axios
+            .post(MOCK_TODOS_URL, newTodo)
+            .then((res: AxiosResponse<Array<Todo>>) => {
+                setTodoList((oldTodoList) => {
+                    console.log([...oldTodoList, res.data]);
+                    return [...oldTodoList, res.data];
+                });
+            });
     };
 
     const isInValid: SubmitErrorHandler<TodoForm> = (errors: any) => {

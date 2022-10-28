@@ -21,13 +21,14 @@ const _TodoCard: NextComponentType<NextPageContext, {}, TodoCardProps> = (
     props: TodoCardProps
 ) => {
     console.log("TodoCard");
-    // const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
+    const setTodoList = useSetRecoilState<Todo[]>(todoAtom);
 
     const doDelete = async () => {
-        axios.delete(MOCK_TODOS_URL + props.todo.id);
-        // setTodoList((oldTodoList) => {
-        //     return oldTodoList.filter((todo) => todo.id !== props.todo.id);
-        // });
+        axios.delete(MOCK_TODOS_URL + props.todo.id).then((res) => {
+            setTodoList((oldTodoList) => {
+                return oldTodoList.filter((todo) => todo.id !== props.todo.id);
+            });
+        });
     };
 
     return (
